@@ -1,21 +1,41 @@
 import  TextField  from '@mui/material/TextField'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { useProductContext } from '../context/ProductContext';
+import { useParams } from 'react-router-dom';
 
 
 
-const Admin = () => {
-    const {addProduct} = useProductContext()
+const Edit = () => {
+    const {getOneProduct,oneProduct ,editProduct} = useProductContext()
     const [values,setValues] = useState({
         image:'',
         name:'',
         price:''
     })
-    function handleClick () {
-        addProduct(values)
+
+    const {id} = useParams()
+
+    function handleSaveChange () {
+        editProduct(values,id)
     }
+    useEffect(() =>  {
+        getOneProduct(id)
+    },[])
+
+    useEffect(() => {
+        if(oneProduct) {
+           setValues({
+            ...values,
+            image:oneProduct.image,
+            name:oneProduct.name,
+            price:oneProduct.price
+           }) 
+        }
+    },[oneProduct])
+
+    console.log(oneProduct);
     return(
         <Box sx={{
             display:'flex',
@@ -33,6 +53,7 @@ const Admin = () => {
              label="image URL" 
              variant="outlined"
              name='image' 
+             value={values.image}
              onChange={(e) => setValues({...values,image:e.target.value})}
              />
              
@@ -44,6 +65,7 @@ const Admin = () => {
             label="Product name"
              variant="outlined"
              name='name'
+             value={values.name}
              onChange={(e) => setValues({...values,name:e.target.value})}
              />
              
@@ -56,14 +78,15 @@ const Admin = () => {
              variant="outlined"
              name='price' 
              type='number'
+             value={values.price}
              onChange={(e) => setValues({...values,price:e.target.value})}
              />
              
 
 
-            <Button onClick={handleClick}  variant="contained">Create</Button>
+            <Button onClick={() => handleSaveChange()}  variant="contained">Create</Button>
         </Box>
         
     )
 }
-export default Admin
+export default Edit

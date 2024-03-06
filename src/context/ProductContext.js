@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 
 const productContext = createContext();
 export const useProductContext = () => useContext(productContext);
@@ -8,29 +8,41 @@ export const useProductContext = () => useContext(productContext);
 
 const ProductContext = ({children}) => {
     const API = "http://localhost:3000/products";
-
-    const [products,setProduct] = useState([])
-
-    async function addProduct(product) {
-        await axios.post(API,product);
-        getProduct()
+    const [product,setProduct] = useState([])
+    const [oneProduct,setOneproduct] = useState({})
+    const addProduct = async (newProduct) => {
+        await axios.post(API,newProduct)
     }
-
-    async function getProduct(){
-        let {data} = await axios(API)
+    const getProduct = async () => {
+        const response = await axios(API)
+        const {data} =  response
         setProduct(data)
     }
 
-    async function delProduct(id) {
-        await axios.delete(`${API}/${id}`);
+    const removeProduct = async (id) => {
+        await axios.delete(`${API}/${id}`)
         getProduct()
     }
+    
+    const getOneProduct = async (id) => {
+        const {data} = await axios(`${API}/${id}`)
+        setOneproduct(data)
+    }
+
+    const editProduct = async (editedProduct,id) => {
+        await axios.patch(`${API}/${id}`,editedProduct)
+    }
+
+
 
     const values = {
         addProduct,
         getProduct,
-        products,
-        delProduct
+        product,
+        removeProduct,
+        getOneProduct,
+        oneProduct,
+        editProduct
     };
     return <productContext.Provider value={values}>{children}</productContext.Provider>
     

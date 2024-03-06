@@ -5,20 +5,17 @@ import ProductCard from './ProductCard';
 
 
 const ProductList = () => {
+    const {getProduct,product} = useProductContext()
 
-    const {products,getProduct} = useProductContext()
-
-    useEffect(() =>{
+    useEffect(() => {
         getProduct()
     },[])
-    console.log(products)
     
     return <Box>
         {
-            products.map((el,idx) => (
-                <ProductCard el={el} key={idx}/>
-            ))
+            product.length > 0 ? (product.map((el,idx) => <ProductCard el={el} key={idx}/>)) : (<h1>Loading...</h1>)
         }
+               
     </Box>
 }
 export default ProductList
